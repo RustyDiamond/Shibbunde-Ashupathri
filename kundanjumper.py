@@ -81,7 +81,7 @@ def levelgenerator():
 def main():
     pygame.init()
     screen = pygame.display.set_mode(SCREEN_SIZE.size)
-    pygame.display.set_caption("Use arrows to move!")
+    pygame.display.set_caption("Aunstin is gae")
     timer = pygame.time.Clock()
 
     levelgenerator()
