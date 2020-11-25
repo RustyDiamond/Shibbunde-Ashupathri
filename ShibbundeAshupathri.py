@@ -27,3 +27,4 @@ while True:
 		insertData()
 	elif do==3:
 		break
+		
