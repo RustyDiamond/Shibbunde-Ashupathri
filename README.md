@@ -1,4 +1,4 @@
-# Shibbunde-Ashupathri\
+# Shibbunde-Ashupathri
 Code assumes that database shibbunde ashupathri already exists.\
 Func to add record and display all.\
 We need funcs to delete,update,display in specific order.\
