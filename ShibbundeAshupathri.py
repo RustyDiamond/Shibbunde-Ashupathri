@@ -2,7 +2,7 @@ import mysql.connector
 Password=input("ENTER PASSWORD- ")
 con=mysql.connector.connect(host="localhost",user="root",password=Password,database="shibbunde_ashupathri")
 cur=con.cursor()
-cur.execute("create table if not exists Hospital_Log(Patient_Number int(4) primary key,
+cur.execute("create table if not exists Hospital_Log(Patient_Number int(4) primary key,\
 	Patient_Name varchar(20),CPR_Number int(5),Reason varchar(20),Date date)")
        
 def insertData():
