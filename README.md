@@ -1,4 +1,6 @@
 # Shibbunde-Ashupathri
+# CHECK PULL REQUESTS, SEE WHAT'S CHANGED UNDER "FILES CHANGED"  AND MERGE TO MAIN.
+
 Code assumes that database shibbunde ashupathri already exists.\
 Func to add record and display all.\
 We need funcs to delete,update,display in specific order.\
