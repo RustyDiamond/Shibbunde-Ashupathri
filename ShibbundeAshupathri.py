@@ -19,9 +19,15 @@ def insert():
     bill=float(input("enter amount to be paid"))
     cur.execute("insert into Hospital_Log values({},'{}',{},'{}','{}','{}')".format(num,name,cpr,reas,date,bill))
     con.commit()
+def search():
+    n=int(input("enter the patient id of the patient details to be searched"))
+    query="select * from hospital_log where PID='"+str(n)+"'"
+    cur.execute(query)
+    for k in cur:
+        print(k)
 createtable()
 insert()
- 
+ search()
 def display():
     cur.execute("select * from Hospital_Log")
     for k in cur:
