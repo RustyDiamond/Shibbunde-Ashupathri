@@ -1,5 +1,6 @@
 # Shibbunde-Ashupathri
 # CHECK PULL REQUESTS, SEE WHAT'S CHANGED UNDER "FILES CHANGED"  AND MERGE TO MAIN.
+And Steeve stop merging your changes youself.
 
 Code assumes that database shibbunde ashupathri already exists.\
 Func to add record and display all.\
