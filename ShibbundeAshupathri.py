@@ -51,6 +51,11 @@ def display():
         print(k)
 
 def search():
+    n=int(input("enter the patient id of the patient details to be searched"))
+    query="select * from hospital_log where PID='"+str(n)+"'"
+    cur.execute(query)
+    for k in cur:
+        print(k)
     
 	
 
