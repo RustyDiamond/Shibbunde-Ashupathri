@@ -11,7 +11,7 @@ departments=[["Cardiologist",10],["Dermatologist",8],["Optometrist",9],["General
                 ["Psychiatrist",9],["Pediatrician",6]]   #The names dont really have to be here,
                                                          #the amounts are enough but I put it in anyway
 
-cur.execute("drop table Hospital_Log")
+
 
 def createtable():     
     query1="create table if not exists Hospital_Log(PID int(4) not null primary key,\
@@ -21,7 +21,7 @@ def createtable():
 createtable()  
 
 
-cur.execute("delete from Hospital_Log")
+
 
 def billcount():
     dep=[]
@@ -120,11 +120,17 @@ def update():
             con.commit()
         
 def search():
-    n=int(input("enter the patient id of the patient details to be searched- "))
+    n=int(input("Enter the patient id of the patient details to be searched- "))
     query="select * from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
-    for k in cur:
-        print(k)
+    
+    
+    mnop = cur.fetchall()
+    if not mnop:
+        print('Not found. Try again')
+        search()
+    if mnop:
+        print(mnop)
 
 while True:
     do=int(input("""COMMANDS- 1-Display all records 
@@ -139,5 +145,6 @@ while True:
         update()
     elif do==4:
         search()
+
 
        
