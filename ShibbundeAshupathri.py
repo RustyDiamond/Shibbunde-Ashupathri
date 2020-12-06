@@ -126,7 +126,7 @@ def delete():
     n=input('Enter ID of patient that is to be deleted')
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
-    print('Record of Patient' ,'n','is deleted')
+    print('Record of Patient' ,n,'is deleted')
     con.commit()
         
 def search():
