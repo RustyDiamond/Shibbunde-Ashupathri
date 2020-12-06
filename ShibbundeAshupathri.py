@@ -1,4 +1,5 @@
 import mysql.connector
+from tabulate import tabulate
 Password=input("ENTER PASSWORD- ")
 con=mysql.connector.connect(host="localhost",user="root",password=Password)
 if con.is_connected():
@@ -70,10 +71,11 @@ def insert():
 
 
 def display():
+    RECORD=[]
     cur.execute("select * from Hospital_Log")
-    for k in cur:
-        print(k)
-
+    RECORD=cur.fetchall()
+    header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
+    print(tabulate(RECORD,headers=header,tablefmt='grid'))
 def update(x=''):
     if not x:
         x=int(input('Enter id of patient , that is to be updated- '))
@@ -120,6 +122,12 @@ def update(x=''):
             cur.execute(query)
             con.commit()
         
+def delete():
+    n=input('Enter ID of patient that is to be deleted')
+    query="delete from hospital_log where PID='"+str(n)+"'"
+    cur.execute(query)
+    print('Record of Patient' ,n,'is deleted')
+    con.commit()
         
 def search():
     n=int(input("Enter the patient id of the patient details to be searched- "))
@@ -142,7 +150,8 @@ while True:
     do=int(input("""COMMANDS- 1-Display all records 
           2-Insert record
           3-Update record 
-          4-Search for record\nENTER COMMAND- """))
+          4-Search for record
+          5-Delete record\nENTER COMMAND-"""))
     if do==1:
         display()
     elif do==2:
@@ -151,8 +160,9 @@ while True:
         update()
     elif do==4:
         search()
+    elif do==5:
+        delete()
     elif not str(do):
         continue
-
 
        
