@@ -28,10 +28,10 @@ def billcount():
     amount=0
     
     while True:
-        if len(dep)>=8:
-            print("DONE")
-            break                                          #Buttons to select dep would be good
-        reason=input("Enter department number(9/Enter to exit)- ")          #tweak this however you want Rishi       
+        if len(dep)>=5:
+            q=input("All selected- Hit enter ")
+            break                                          
+        reason=input("Enter department number(9/Enter to exit)- ")                 
         if not reason or reason==9:
             print("DONE")
             break
@@ -47,7 +47,10 @@ def billcount():
             amount+=departments[int(reason)-1][1] 
     deps=""
     for x in dep:
-        deps+=x+","
+        if x==dep[-1]:
+            deps+=x
+        else:
+            deps+=x+","
     return amount,deps
 
 
@@ -63,7 +66,8 @@ def insert():
              6-General Surgeon
              7-Psychiatrist
              8-Dermatologist
-             9/Enter-Exit""")
+             9/Enter-Exit
+             MAX FIVE""")
     bill,reas=billcount()
     date=input("ENTER DATE OF ADMISSION- ")
     cur.execute("insert into Hospital_Log values({},'{}',{},'{}','{}','{}')".format(num,name,cpr,reas,date,bill))
@@ -122,11 +126,12 @@ def update(x=''):
             cur.execute(query)
             con.commit()
         
-def delete():
-    n=input('Enter ID of patient that is to be deleted')
+def delete(n=''):
+    if not n:
+        n=input('Enter ID of patient that is to be deleted')
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
-    print('Record of Patient' ,n,'is deleted')
+    print('Record of Patient Number' ,n,'is deleted')
     con.commit()
         
 def search():
@@ -141,10 +146,12 @@ def search():
         search()
     else:
         print(rec)
-        op=input("""Would you like to update? 1-Yes
-                          2/Enter-No\n-- """)
+        op=input("""Would you like to 1-Update 
+                  2-Delete\n-- """)
         if op=='1':
             update(n)
+        elif op=='2':
+            delete(n)
 
 while True:
     do=int(input("""COMMANDS- 1-Display all records 
