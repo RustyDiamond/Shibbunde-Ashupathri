@@ -85,11 +85,39 @@ def insert():
 
 
 def display():
-    RECORD=[]
-    cur.execute("select * from Hospital_Log")
-    RECORD=cur.fetchall()
-    header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
-    print(tabulate(RECORD,headers=header,tablefmt='grid'))
+    while True:
+        op=input("""What would you like to display?- 1-All records
+                               2-All records by date
+                               3/Enter-Exit """)
+        if op not in('1','2','3'):
+            print("Invalid input. Try again ")
+            continue
+        elif op=='3' or not op:
+            break
+        elif op=='1':
+            RECORD=[]
+            cur.execute("select * from Hospital_Log")
+            RECORD=cur.fetchall()
+            header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
+            print(tabulate(RECORD,headers=header,tablefmt='grid'))
+        elif op=='2':
+            while True:
+                op1=input("""Order- 1-Old to New
+                           2-New to Old""")
+                if op1 not in('1','2'):
+                    print("Invalid input. Try again ")
+                    continue
+
+                elif op1=='1':
+                    cur.execute("select * from Hospital_Log order by Date_of_entry asc")
+                    for k in cur:
+                        print(K)
+                        break
+                elif op1=='2':
+                    cur.execute("select * from Hospital_Log order by Date_of_entry desc")
+                    for k in cur:
+                        print(K)
+                        break
 
 def update(x=''):
     print('''What would you like to update?- 1-PID
