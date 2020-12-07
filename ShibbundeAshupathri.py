@@ -163,7 +163,8 @@ def search(upd,dele):
             search(False,True)
    
     else:
-        print(rec)
+        header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
+        print(tabulate(rec,headers=header,tablefmt='grid'))                
         if upd==True:
             update(n)
         elif dele==True:
