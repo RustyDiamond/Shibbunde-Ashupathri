@@ -2,25 +2,19 @@ import mysql.connector
 from tabulate import tabulate
 Password=input("ENTER PASSWORD- ")
 con=mysql.connector.connect(host="localhost",user="root",password=Password)
-if con.is_connected():
-    print("connection is succesful")
 cur=con.cursor()
 cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
-print("database created")
 departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
     ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
-
-
-
-def createtable():     
-    query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
+   
+query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
     varchar(20),CPR_Number int(9),Reason varchar(100),Date_of_entry date,bill decimal(6,3))"
-    cur.execute(query1)
+cur.execute(query1)
 
-createtable()  
+cur.execute("use shmhospital")
 
-
+cur.execute("select count(*) from Hospital_Log")
 
 
 def billcount():
@@ -53,11 +47,30 @@ def billcount():
             deps+=x+","
     return amount,deps
 
-
+def inpcheck(x):
+    while True:
+        try:
+            inp=int(input(x))
+        except:
+            print("Invalid input. Try again")
+            continue
+        break
+    return inp
+        
 def insert():
-    num=int(input("ENTER Patient_ID- "))
+    while True:
+        num=inpcheck("ENTER Patient_ID- ")
+        query="select * from hospital_log where PID='"+str(num)+"'"
+        cur.execute(query)
+        rec = cur.fetchall()
+        if not rec:
+            break
+        else:
+            print("Entered ID already in use. ")
+            continue
+        
     name=input("ENTER NAME- ")
-    cpr=int(input("ENTER CPR- "))
+    cpr=inpcheck("ENTER CPR- ")
     print("""DEPARTMENTS- 1-ENT
              2-Dentist 
              3-Pediatrician 
@@ -67,7 +80,7 @@ def insert():
              7-Psychiatrist
              8-Dermatologist
              9/Enter-Exit
-             MAX FIVE""")
+             (MAX FIVE)""")
     bill,reas=billcount()
     date=input("ENTER DATE OF ADMISSION- ")
     cur.execute("insert into Hospital_Log values({},'{}',{},'{}','{}','{}')".format(num,name,cpr,reas,date,bill))
@@ -80,9 +93,8 @@ def display():
     RECORD=cur.fetchall()
     header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
     print(tabulate(RECORD,headers=header,tablefmt='grid'))
+
 def update(x=''):
-    if not x:
-        x=int(input('Enter id of patient , that is to be updated- '))
     print('''What would you like to update?- 1-PID
                                 2-Patient name
                                 3-CPR NO.
@@ -91,30 +103,32 @@ def update(x=''):
                                 6/Enter-Exit''')
     while True:
         ch=input('Enter Choice(6/Enter to exit)- ')
-        if not ch or ch==6:
+        if not ch or ch=='6':
             break
-        elif int(ch) not in (1,2,3,4,5,6):
+        elif ch not in ('1','2','3','4','5','6'):
             print("Incorrect input. Try again")
 
-        
-
         elif ch=='1':
-            n=int(input('Enter new patient id- '))
+            n=inpcheck('Enter new patient id- ')
+            q=input("Hit enter to confirm ")
             query="update hospital_log set PID='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
         elif ch=='2':
             n=input('Enter New patient name- ')
+            q=input("Hit enter to confirm ")
             query="update hospital_log set Patient_Name='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
         elif ch=='3':
-            n=input('Enter New CPR No.- ')
+            n=inpcheck('Enter New CPR No.- ')
+            q=input("Hit enter to confirm ")
             query="update hospital_log set CPR_Number='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
         elif ch=='4':
             bill,reas=billcount()
+            q=input("Hit enter to confirm ")
             query="update hospital_log set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
             query="update hospital_log set bill='"+str(bill)+"' where PID='"+str(x)+"'"
@@ -122,23 +136,26 @@ def update(x=''):
             con.commit()
         elif ch=='5':
             n=input('Enter New Date- ')
+            q=input("Hit enter to confirm ")
             query="update hospital_log set Date_of_entry='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
         
 def delete(n=''):
-    if not n:
-        n=input('Enter ID of patient that is to be deleted')
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
     print('Record of Patient Number' ,n,'is deleted')
     con.commit()
         
-def search():
-    n=int(input("Enter the patient id of the patient details to be searched- "))
+def search(upd,dele):
+    if upd==True:
+        n=inpcheck("Enter the patient id of the patient details to be updated- ")
+    elif dele==True:
+        n=inpcheck("Enter the patient id of the patient details to be deleted- ")
+    else:
+        n=inpcheck("Enter the patient id of the patient details to be searched- ")
     query="select * from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
-    
     
     rec = cur.fetchall()
     if not rec:
@@ -146,30 +163,28 @@ def search():
         search()
     else:
         print(rec)
-        op=input("""Would you like to 1-Update 
-                  2-Delete\n-- """)
-        if op=='1':
+        if upd==True:
             update(n)
-        elif op=='2':
+        elif dele==True:
+            q=input("Hit enter to confirm ")
             delete(n)
 
 while True:
-    do=int(input("""COMMANDS- 1-Display all records 
+    do=inpcheck("""COMMANDS- 1-Display all records 
           2-Insert record
-          3-Update record 
-          4-Search for record
-          5-Delete record\nENTER COMMAND-"""))
+          3-Search for record
+          4-Update record 
+          5-Delete record\nENTER COMMAND-""")
     if do==1:
         display()
     elif do==2:
         insert()
     elif do==3:
-        update()
+        search(False,False)    #search
     elif do==4:
-        search()
+        search(True,False)    #update
     elif do==5:
-        delete()
+        search(False,True)    #delete
     elif not str(do):
         continue
-
        
