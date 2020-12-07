@@ -167,8 +167,18 @@ def search(upd,dele):
         if upd==True:
             update(n)
         elif dele==True:
-            q=input("Hit enter to confirm ")
-            delete(n)
+            while True:
+                q=input("Hit enter to confirm(1 to cancel) ")
+                if not q:
+                    delete(n)
+                    break
+                elif q=='1':
+                    search(False,True)
+                    break
+                else:
+                    print("Invalid input. Try again")
+                    continue
+                   
 
 while True:
     do=inpcheck("""COMMANDS- 1-Display all records 
