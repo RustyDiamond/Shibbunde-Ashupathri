@@ -14,9 +14,6 @@ cur.execute(query1)
 
 cur.execute("use shmhospital")
 
-cur.execute("select count(*) from Hospital_Log")
-
-
 def billcount():
     dep=[]
     amount=0
