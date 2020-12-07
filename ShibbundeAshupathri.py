@@ -87,8 +87,8 @@ def insert():
 def display():
     while True:
         op=input("""What would you like to display?- 1-All records
-                               2-All records by date
-                               3/Enter-Exit """)
+                                 2-All records by date
+                                 3/Enter-Exit\n-- """)
         if op not in('1','2','3'):
             print("Invalid input. Try again ")
             continue
@@ -103,7 +103,7 @@ def display():
         elif op=='2':
             while True:
                 op1=input("""Order- 1-Old to New
-                           2-New to Old""")
+       2-New to Old\n--""")
                 if op1 not in('1','2'):
                     print("Invalid input. Try again ")
                     continue
@@ -111,13 +111,13 @@ def display():
                 elif op1=='1':
                     cur.execute("select * from Hospital_Log order by Date_of_entry asc")
                     for k in cur:
-                        print(K)
-                        break
+                        print(k)
+                    break
                 elif op1=='2':
                     cur.execute("select * from Hospital_Log order by Date_of_entry desc")
                     for k in cur:
-                        print(K)
-                        break
+                        print(k)
+                    break
 
 def update(x=''):
     print('''What would you like to update?- 1-PID
@@ -189,6 +189,8 @@ def search(upd,dele):
             search(True,False)
         elif dele==True:
             search(False,True)
+        else:
+            search(False,False)
    
     else:
         header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
