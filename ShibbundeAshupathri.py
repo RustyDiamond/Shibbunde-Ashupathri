@@ -23,7 +23,7 @@ def billcount():
             q=input("All selected- Hit enter ")
             break                                          
         reason=input("Enter department number(9/Enter to exit)- ")                 
-        if not reason or reason==9:
+        if not reason or reason=='9':
             print("DONE")
             break
         if int(reason) not in (1,2,3,4,5,6,7,8,9):
@@ -157,7 +157,11 @@ def search(upd,dele):
     rec = cur.fetchall()
     if not rec:
         print('Not found. Try again')
-        search()
+        if upd==True:
+            search(True,False)
+        elif dele==True:
+            search(False,True)
+   
     else:
         print(rec)
         if upd==True:
