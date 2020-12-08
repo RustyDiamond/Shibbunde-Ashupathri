@@ -57,7 +57,7 @@ def inpcheck(x):
 def insert():
     print("")
     while True:
-        num=inpcheck("---ENTER Patient_ID---: ")
+        num=inpcheck("ENTER Patient_ID---: ")
         query="select * from hospital_log where PID='"+str(num)+"'"
         cur.execute(query)
         rec = cur.fetchall()
@@ -67,26 +67,26 @@ def insert():
             print("Entered ID already in use. ")
             continue
         
-    name=input("---ENTER NAME---: ")
+    name=input("ENTER NAME---: ")
     while True:
-        cpr=inpcheck("---ENTER CPR---: ")
+        cpr=inpcheck("ENTER CPR---: ")
         if len(str(cpr))==5:
             break
         else:
             print("Invalid CPR Number. Make sure 5 digits are present ")
     print("""---DEPARTMENTS---
-             -> 1-ENT
-             -> 2-Dentist 
-             -> 3-Pediatrician 
-             -> 4-Cardiologist 
-             -> 5-Ophthalmologist
-             -> 6-General Surgeon
-             -> 7-Psychiatrist
-             -> 8-Dermatologist
-             -> 9/Enter-Exit
-             ***(MAX FIVE)""")
+          -> 1-ENT
+          -> 2-Dentist 
+          -> 3-Pediatrician 
+          -> 4-Cardiologist 
+          -> 5-Ophthalmologist
+          -> 6-General Surgeon
+          -> 7-Psychiatrist
+          -> 8-Dermatologist
+          -> 9/Enter-Exit
+          ***(MAX FIVE)""")
     bill,reas=billcount()
-    date=input("---ENTER DATE OF ADMISSION--- ")
+    date=input("ENTER DATE OF ADMISSION--- ")
     cur.execute("insert into Hospital_Log values({},'{}',{},'{}','{}','{}')".format(num,name,cpr,reas,date,bill))
     con.commit()
 
@@ -100,7 +100,7 @@ def display():
         2-All records by date
         ---------------------------
         3/Enter-Exit
-        ---------------------------""")
+        ---------------------------\n--""")
         if op=='3' or not op:
             break
         elif op not in('1','2','3'):
@@ -291,7 +291,7 @@ def search(upd,dele):
                    
 
 while True:
-    print("""   ------COMMANDS------
+    print("""    ------COMMANDS------
     ---------------------------
     1-Display all records
     ---------------------------
@@ -306,42 +306,45 @@ while True:
     6/Enter- Exit
     ---------------------------""")
     while True:
-        do=input("""ENTER COMMAND-""")
-        if do not in('1','2','3','4','5','6'):
+        do=input("""ENTER COMMAND- """)
+        if not do:
+            break
+        elif do not in('1','2','3','4','5','6'):
             print("Invalid input. Try again ")
             continue
+
         break
     if do=='1':
         print("")
-        s1 = "II---DISPLAY SELECTED---II"
+        s1 = "II---DISPLAY---II"
         kop1 = s1.center(70,"-")
         print(kop1)
         print("")
         display()
     elif do=='2':
         print("")
-        s2 = "II---INSERT SELECTED---II"
+        s2 = "II---INSERT---II"
         kop2 = s2.center(70,"-")
         print(kop2)
         print("")
         insert()
     elif do=='3':
         print("")
-        s3 = "II---SEARCH SELECTED---II"
+        s3 = "II---SEARCH---II"
         kop3 = s3.center(70,"-")
         print(kop3)
         print("")
         search(False,False)    #search
     elif do=='4':
         print("")
-        s4 = "II---UPDATE SELECTED---II"
+        s4 = "II---UPDATE---II"
         kop4 = s4.center(70,"-")
         print(kop4)
         print("")
         search(True,False)    #update
     elif do=='5':
         print("")
-        s5 = "II---DELETE SELECTED---II"
+        s5 = "II---DELETE---II"
         kop5 = s5.center(70,"-")
         print(kop5)
         print("")
