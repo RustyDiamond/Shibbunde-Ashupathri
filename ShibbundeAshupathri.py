@@ -273,7 +273,7 @@ def search(upd,dele):
                    
 
 while True:
-    do=inpcheck("""COMMANDS- 1-Display all records 
+    print("""COMMANDS- 1-Display all records 
           2-Insert record
           3-Search for record
           4-Update record 
