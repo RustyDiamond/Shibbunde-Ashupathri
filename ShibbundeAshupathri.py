@@ -26,13 +26,13 @@ def billcount():
         if not reason or reason=='9':
             print("DONE")
             break
-        if int(reason) not in (1,2,3,4,5,6,7,8,9):
+        if reason not in ('1','2','3','4','5','6','7','8',):
             print("Not available ")
             continue
         curdep=departments[int(reason)-1][0]
         if curdep in dep:
             print("Already selected ")
-        elif int(reason) in (1,2,3,4,5,6,7,8,9) and curdep not in dep:
+        elif reason in ('1','2','3','4','5','6','7','8','9') and curdep not in dep:
             dep.append(curdep)
             print(curdep)
             amount+=departments[int(reason)-1][1] 
@@ -98,7 +98,7 @@ def display():
            ('3/Enter','Exit')]
         h=('Hit','To Display')
         print(tabulate(x,headers=h,tablefmt='grid'))
-        op=input("What would you like to display?")
+        op=input("What would you like to display?- ")
         
         if op=='3' or not op:
             break
@@ -112,6 +112,7 @@ def display():
             RECORD=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(RECORD,headers=header,tablefmt='grid'))
+            q=input("Hit enter to continue ")
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
@@ -128,23 +129,25 @@ def display():
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
                     print(tabulate(z,headers=header,tablefmt='grid')) 
-                    
+                    q=input("Hit enter to continue ")
                     break
                 elif op1=='2':
                     cur.execute("select * from Hospital_Log order by Date_of_entry desc")
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
                     print(tabulate(z,headers=header,tablefmt='grid'))
+                    q=input("Hit enter to continue ")
                     break
                     
 def update(x=''):
-    x=[('2','Patient name'),
+    p=[('1','Patient ID'),
+       ('2','Patient name'),
        ('3','CPR NO.'),
-       ('4'-'Reason'),
+       ('4','Reason'),
        ('5','Date of Entry'),
        ('6','Enter-Exit')]
     h=('Hit','To Updae')
-    print(tabulate(x,headers=h,tablefmt='grid'))
+    print(tabulate(p,headers=h,tablefmt='grid'))
     print('What would you like to update?')
                
     while True:
@@ -156,7 +159,6 @@ def update(x=''):
 
         elif ch=='1':
             n=inpcheck('Enter new patient id- ')
-            q=input("Hit enter to confirm ")
             query="update hospital_log set PID='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -164,12 +166,12 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='grid'))               
+            print(tabulate(z,headers=header,tablefmt='grid'))
+            q=input("Hit enter to continue ")               
             
         elif ch=='2':
             n=input('Enter New patient name- ')
-            q=input("Hit enter to confirm ")
-            query="update hospital_log set Patient_Name='"+n+"' where PID='"+str(x)+"'"
+            query="update hospital_log set Patient_Name='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
             m="select * from hospital_log where PID='"+str(x)+"'"
@@ -177,6 +179,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='grid'))
+            q=input("Hit enter to continue ")
                
         elif ch=='3':
             while True:
@@ -185,7 +188,6 @@ def update(x=''):
                     break
                 else:
                     print("Invalid CPR Number. Make sure 5 digits are present ")
-            q=input("Hit enter to confirm ")
             query="update hospital_log set CPR_Number='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -194,9 +196,9 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='grid'))
+            q=input("Hit enter to continue ")
         elif ch=='4':
             bill,reas=billcount()
-            q=input("Hit enter to confirm ")
             query="update hospital_log set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
             query="update hospital_log set bill='"+str(bill)+"' where PID='"+str(x)+"'"
@@ -206,11 +208,11 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='grid'))                  
+            print(tabulate(z,headers=header,tablefmt='grid')) 
+            q=input("Hit enter to continue ")                 
 
         elif ch=='5':
             n=input('Enter New Date- ')
-            q=input("Hit enter to confirm ")
             query="update hospital_log set Date_of_entry='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -219,6 +221,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='grid'))
+            q=input("Hit enter to continue ")
         
 def delete(n=''):
     query="delete from hospital_log where PID='"+str(n)+"'"
@@ -233,10 +236,6 @@ def search(upd,dele):
         n=inpcheck("Enter the patient id of the patient details to be deleted- ")
     else:
         n=inpcheck("Enter the patient id of the patient details to be searched- ")
-        op=input("""Search using- 1-Patient ID
-            2-Date Of Entry
-            3-Patient Name""")
-    
     query="select * from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
     
@@ -251,8 +250,9 @@ def search(upd,dele):
             search(False,False)
    
     else:
-        header=('P.ID','Patient Name','CPR,Reason','Date of Entry',' Bill')
-        print(tabulate(rec,headers=header,tablefmt='grid'))                
+        header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+        print(tabulate(rec,headers=header,tablefmt='grid'))
+                     
         if upd==True:
             update(n)
         elif dele==True:
@@ -260,9 +260,11 @@ def search(upd,dele):
                 q=input("Hit enter to confirm / 1 to cancel- ")
                 if not q:
                     delete(n)
+                    q=input("Hit enter to continue ")   
                     break
                 elif q=='1':
                     search(False,True)
+                    q=input("Hit enter to continue ")   
                     break
                 else:
                     print("Invalid input. Try again")
@@ -274,22 +276,27 @@ while True:
        ('2','Insert record'),
        ('3','Search for record'),
        ('4','Update record'),
-       ('5','Delete record')]
+       ('5','Delete record'),
+       ('6/Enter','Exit')]
     h=('Press',"Commands")
     print(tabulate(x,headers=h,tablefmt='grid'))
-    do=inpcheck('Enter Option- ')
-                  
-    if do==1:
+    while True:
+        do=input('Enter Option- ')
+        if do not in('1','2','3','4','5','6'):
+            print("Invalid input. Try again ")
+            continue
+        break
+    if do=='1':
         display()
-    elif do==2:
+    elif do=='2':
         insert()
-    elif do==3:
+    elif do=='3':
         search(False,False)    #search
-    elif do==4:
+    elif do=='4':
         search(True,False)    #update
-    elif do==5:
+    elif do=='5':
         search(False,True)    #delete
-    elif not str(do):
+    elif not do or do=='6':
         break
        
 
