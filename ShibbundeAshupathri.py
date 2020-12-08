@@ -105,14 +105,14 @@ def display():
             cur.execute("select * from Hospital_Log")
             RECORD=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(RECORD,headers=header,tablefmt='fancygrid'))
+            print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
                    ('2','New to Old')]
                 h=('Hit','Order')
-                print(tabulate(x,headers=h,tablefmt='fancygrid'))
+                print(tabulate(x,headers=h,tablefmt='fancy_grid'))
                 op1=input('Order-') 
                 
                 if op1 not in('1','2'):
@@ -122,14 +122,14 @@ def display():
                     cur.execute("select * from Hospital_Log order by Date_of_entry asc")
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-                    print(tabulate(z,headers=header,tablefmt='fancygrid')) 
+                    print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     break
                 elif op1=='2':
                     cur.execute("select * from Hospital_Log order by Date_of_entry desc")
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-                    print(tabulate(z,headers=header,tablefmt='fancygrid'))
+                    print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
                     break
                     
@@ -157,7 +157,7 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='fancygrid'))
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")               
             
         elif ch=='2':
@@ -169,7 +169,7 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='fancygrid'))
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
                
         elif ch=='3':
@@ -186,7 +186,7 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='grid'))
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
         elif ch=='4':
             print("""DEPARTMENTS- 1-ENT
@@ -209,7 +209,7 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='fancygrid')) 
+            print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
             q=input("Hit enter to continue ")                 
 
         elif ch=='5':
@@ -221,7 +221,7 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-            print(tabulate(z,headers=header,tablefmt='fancygrid'))
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
         
 def delete(n=''):
@@ -252,7 +252,7 @@ def search(upd,dele):
    
     else:
         header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
-        print(tabulate(rec,headers=header,tablefmt='fancygrid'))
+        print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
                      
         if upd==True:
             update(n)
@@ -277,7 +277,8 @@ while True:
           2-Insert record
           3-Search for record
           4-Update record 
-          5-Delete record""")
+          5-Delete record
+          6/Enter- Exit""")
     while True:
         do=input('ENTER COMMAND- ')
         if do not in('1','2','3','4','5','6'):
