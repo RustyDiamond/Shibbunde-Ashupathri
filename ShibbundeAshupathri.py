@@ -277,9 +277,9 @@ while True:
           2-Insert record
           3-Search for record
           4-Update record 
-          5-Delete record\nENTER COMMAND-""")
+          5-Delete record""")
     while True:
-        do=input('Enter Option- ')
+        do=input('ENTER COMMAND- ')
         if do not in('1','2','3','4','5','6'):
             print("Invalid input. Try again ")
             continue
