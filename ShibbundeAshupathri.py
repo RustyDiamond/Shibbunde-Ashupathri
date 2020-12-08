@@ -184,11 +184,11 @@ def update(x=''):
         elif ch=='3':
             while True:
                 n=inpcheck('Enter New CPR No.- ')
-                if len(str(cpr))==5:
+                if len(str(n))==5:
                     break
                 else:
                     print("Invalid CPR Number. Make sure 5 digits are present ")
-            query="update hospital_log set CPR_Number='"+n+"' where PID='"+str(x)+"'"
+            query="update hospital_log set CPR_Number='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
             m="select * from hospital_log where PID='"+str(x)+"'"
@@ -198,6 +198,18 @@ def update(x=''):
             print(tabulate(z,headers=header,tablefmt='grid'))
             q=input("Hit enter to continue ")
         elif ch=='4':
+            p=[("1","ENT"),
+               ('2','Dentist'),
+               ('3','Pediatrician'),
+               ('4','Cardiologist'),
+               ('5','Ophthalmologist'),
+               ('6','General_Surgeon'),
+               ('7','Psychiatrist'),
+               ('8','Dermatologist'),
+               ('9', 'Enter_to_Exit')]
+            h=('Press','Departments')
+            print(tabulate(p,headers=h,tablefmt='grid'))
+            print('Maximum 5 Departments')
             bill,reas=billcount()
             query="update hospital_log set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
