@@ -56,8 +56,6 @@ def inpcheck(x):
         
 def insert():
     print("")
-    print("I---INSERT SELECTED---I")
-    print("")
     while True:
         num=inpcheck("---ENTER Patient_ID---: ")
         query="select * from hospital_log where PID='"+str(num)+"'"
@@ -107,6 +105,7 @@ def display():
             break
         elif op not in('1','2','3'):
             print("Invalid input. Try again ")
+            print("")
             continue
         
         elif op=='1':
@@ -115,6 +114,7 @@ def display():
             RECORD=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
+            print("")
             q=input("Hit enter to continue ")
         elif op=='2':
             while True:
@@ -133,6 +133,7 @@ def display():
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
+                    print("")
                     break
                 elif op1=='2':
                     cur.execute("select * from Hospital_Log order by Date_of_entry desc")
@@ -140,25 +141,29 @@ def display():
                     header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
+                    print("")
                     break
                     
 def update(x=''):
-    print('''What would you like to update?- 1-PID
-                                2-Patient name
-                                3-CPR NO.
-                                4-Reason
-                                5-Date of Entry
-                                6/Enter-Exit''')
+    print("")
+    print('''What would you like to update?
+                --> 1-PID
+                --> 2-Patient name
+                --> 3-CPR NO.
+                --> 4-Reason
+                --> 5-Date of Entry
+                --> 6/Enter-Exit''')
                
     while True:
         ch=input('Enter Choice(6/Enter to exit)- ')
+        print("")
         if not ch or ch=='6':
             break
         elif ch not in ('1','2','3','4','5','6'):
             print("Incorrect input. Try again")
 
         elif ch=='1':
-            n=inpcheck('Enter new patient id- ')
+            n=inpcheck('Enter new patient id-- ')
             query="update hospital_log set PID='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -167,10 +172,11 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
-            q=input("Hit enter to continue ")               
+            q=input("Hit enter to continue ")
+            print("")
             
         elif ch=='2':
-            n=input('Enter New patient name- ')
+            n=input('Enter New patient name-- ')
             query="update hospital_log set Patient_Name='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -180,6 +186,7 @@ def update(x=''):
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
+            print("")
                
         elif ch=='3':
             while True:
@@ -187,7 +194,7 @@ def update(x=''):
                 if len(str(n))==5:
                     break
                 else:
-                    print("Invalid CPR Number. Make sure 5 digits are present ")
+                    print("*Invalid CPR Number. Make sure 5 digits are present* ")
             query="update hospital_log set CPR_Number='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -197,17 +204,19 @@ def update(x=''):
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
+            print("")
         elif ch=='4':
-            print("""DEPARTMENTS- 1-ENT
-             2-Dentist 
-             3-Pediatrician 
-             4-Cardiologist 
-             5-Ophthalmologist
-             6-General Surgeon
-             7-Psychiatrist
-             8-Dermatologist
-             9/Enter-Exit
-             (MAX FIVE)""")
+            print("""---ENTER NEW DEPARTMENTS---
+                    --> 1-ENT
+                    --> 2-Dentist 
+                    --> 3-Pediatrician 
+                    --> 4-Cardiologist 
+                    --> 5-Ophthalmologist
+                    --> 6-General Surgeon
+                    --> 7-Psychiatrist
+                    --> 8-Dermatologist
+                    --> 9/Enter-Exit
+                    --> (MAX FIVE)""")
             bill,reas=billcount()
             query="update hospital_log set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
@@ -297,21 +306,50 @@ while True:
     6/Enter- Exit
     ---------------------------""")
     while True:
-        do=input("""ENTER COMMAND-"""
-                 )
+        do=input("""ENTER COMMAND-""")
         if do not in('1','2','3','4','5','6'):
             print("Invalid input. Try again ")
             continue
         break
     if do=='1':
+        print("")
+        s1 = "II---DISPLAY SELECTED---II"
+        kop1 = s1.center(70,"-")
+        print(kop1)
+        print("")
         display()
     elif do=='2':
+        print("")
+        s2 = "II---INSERT SELECTED---II"
+        kop2 = s2.center(70,"-")
+        print(kop2)
+        print("")
         insert()
     elif do=='3':
+        print("")
+        s3 = "II---SEARCH SELECTED---II"
+        kop3 = s3.center(70,"-")
+        print(kop3)
+        print("")
         search(False,False)    #search
     elif do=='4':
+        print("")
+        s4 = "II---UPDATE SELECTED---II"
+        kop4 = s4.center(70,"-")
+        print(kop4)
+        print("")
         search(True,False)    #update
     elif do=='5':
+        print("")
+        s5 = "II---DELETE SELECTED---II"
+        kop5 = s5.center(70,"-")
+        print(kop5)
+        print("")
         search(False,True)    #delete
     elif not do or do=='6':
+        print("")
+        s6 = "II---EXIT---II"
+        kop6 = s6.center(70,"-")
+        print(kop6)
+        print("")
         break
