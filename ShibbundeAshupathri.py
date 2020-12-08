@@ -73,18 +73,16 @@ def insert():
             break
         else:
             print("Invalid CPR Number. Make sure 5 digits are present ")
-    x=[("1","ENT"),
-       ('2','Dentist'),
-       ('3','Pediatrician'),
-       ('4','Cardiologist'),
-       ('5','Ophthalmologist'),
-       ('6','General_Surgeon'),
-       ('7','Psychiatrist'),
-       ('8','Dermatologist'),
-       ('9', 'Enter_to_Exit')]
-    h=('Press','Departments')
-    print(tabulate(x,headers=h,tablefmt='grid'))
-    print('Maximum 5 Departments')
+    print("""DEPARTMENTS- 1-ENT
+             2-Dentist 
+             3-Pediatrician 
+             4-Cardiologist 
+             5-Ophthalmologist
+             6-General Surgeon
+             7-Psychiatrist
+             8-Dermatologist
+             9/Enter-Exit
+             (MAX FIVE)""")
     bill,reas=billcount()
     date=input("ENTER DATE OF ADMISSION- ")
     cur.execute("insert into Hospital_Log values({},'{}',{},'{}','{}','{}')".format(num,name,cpr,reas,date,bill))
@@ -93,13 +91,9 @@ def insert():
 
 def display():
     while True:
-        x=[('1','All records'),
-           ('2','All records by date'),
-           ('3/Enter','Exit')]
-        h=('Hit','To Display')
-        print(tabulate(x,headers=h,tablefmt='grid'))
-        op=input("What would you like to display?- ")
-        
+        op=input("""What would you like to display?- 1-All records
+                               2-All records by date
+                               3/Enter-Exit """)
         if op=='3' or not op:
             break
         elif op not in('1','2','3'):
@@ -140,15 +134,12 @@ def display():
                     break
                     
 def update(x=''):
-    p=[('1','Patient ID'),
-       ('2','Patient name'),
-       ('3','CPR NO.'),
-       ('4','Reason'),
-       ('5','Date of Entry'),
-       ('6','Enter-Exit')]
-    h=('Hit','To Updae')
-    print(tabulate(p,headers=h,tablefmt='grid'))
-    print('What would you like to update?')
+    print('''What would you like to update?- 1-PID
+                                2-Patient name
+                                3-CPR NO.
+                                4-Reason
+                                5-Date of Entry
+                                6/Enter-Exit''')
                
     while True:
         ch=input('Enter Choice(6/Enter to exit)- ')
@@ -198,18 +189,16 @@ def update(x=''):
             print(tabulate(z,headers=header,tablefmt='grid'))
             q=input("Hit enter to continue ")
         elif ch=='4':
-            p=[("1","ENT"),
-               ('2','Dentist'),
-               ('3','Pediatrician'),
-               ('4','Cardiologist'),
-               ('5','Ophthalmologist'),
-               ('6','General_Surgeon'),
-               ('7','Psychiatrist'),
-               ('8','Dermatologist'),
-               ('9', 'Enter_to_Exit')]
-            h=('Press','Departments')
-            print(tabulate(p,headers=h,tablefmt='grid'))
-            print('Maximum 5 Departments')
+            print("""DEPARTMENTS- 1-ENT
+             2-Dentist 
+             3-Pediatrician 
+             4-Cardiologist 
+             5-Ophthalmologist
+             6-General Surgeon
+             7-Psychiatrist
+             8-Dermatologist
+             9/Enter-Exit
+             (MAX FIVE)""")
             bill,reas=billcount()
             query="update hospital_log set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
@@ -284,14 +273,11 @@ def search(upd,dele):
                    
 
 while True:
-    x=[('1','Display all records'),
-       ('2','Insert record'),
-       ('3','Search for record'),
-       ('4','Update record'),
-       ('5','Delete record'),
-       ('6/Enter','Exit')]
-    h=('Press',"Commands")
-    print(tabulate(x,headers=h,tablefmt='grid'))
+    do=inpcheck("""COMMANDS- 1-Display all records 
+          2-Insert record
+          3-Search for record
+          4-Update record 
+          5-Delete record\nENTER COMMAND-""")
     while True:
         do=input('Enter Option- ')
         if do not in('1','2','3','4','5','6'):
