@@ -108,18 +108,19 @@ def insert():
 
 
 def display():
-    while True:
+   while True:
         op=input("""What would you like to display?
         ---------------------------
         1-All records
         ---------------------------
         2-All records by date
         ---------------------------
-        3/Enter-Exit
-        ---------------------------\n--""")
-        if op=='3' or not op:
+        3-Patient Bill
+        ---------------------------
+        4/Enter-Exit \n--""")
+        if op=='4' or not op:
             break
-        elif op not in('1','2','3'):
+        elif op not in('1','2','3','4'):
             print("Invalid input. Try again ")
             print("")
             continue
@@ -159,6 +160,32 @@ def display():
                     q=input("Hit enter to continue ")
                     print("")
                     break
+        elif op=='3':
+            while True:
+                x=[('1','Old to New'),
+                   ('2','New to Old')]
+                h=('Hit','Order')
+                print(tabulate(x,headers=h,tablefmt='fancy_grid'))
+                op1=input('Order-') 
+                
+                if op1 not in('1','2'):
+                    print("Invalid input. Try again ")
+                    continue
+                elif op1=='1':
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
+                    z=cur.fetchall()
+                    header=('P.ID','Reason','Bill','Date of Entry')
+                    print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
+                    q=input("Hit enter to continue ")
+                    print("")
+                    break
+                elif op1=='2':
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
+                    z=cur.fetchall()
+                    header=('P.ID','Reason','Bill','Date of Entry')
+                    print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+                    q=input("Hit enter to continue ")
+                    print("")
                     
 def update(x=''):
     print("")
