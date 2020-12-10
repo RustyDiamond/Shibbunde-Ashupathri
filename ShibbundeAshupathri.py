@@ -1,13 +1,19 @@
 import mysql.connector
 from tabulate import tabulate
-Password=input("ENTER PASSWORD--- ")
-con=mysql.connector.connect(host="localhost",user="root",password=Password)
+while True:
+    try:
+        Password=input("ENTER PASSWORD--- ")
+        con=mysql.connector.connect(host="localhost",user="root",password=Password)
+    except mysql.connector.errors.ProgrammingError:
+        print("Incorrect password. Try again. ")
+        continue
+    break
 cur=con.cursor()
 cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
 departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
     ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
-   
+   Hospital_Log1
 query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
     varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
 cur.execute(query1)
@@ -62,7 +68,7 @@ def insert():
     print("")
     while True:
         num=inpcheck("ENTER Patient_ID---: ")
-        query="select * from hospital_log1 where PID='"+str(num)+"'"
+        query="select * from hospital_log where PID='"+str(num)+"'"
         cur.execute(query)
         rec = cur.fetchall()
         if not rec:
@@ -77,6 +83,7 @@ def insert():
         if len(gend)>1 or gend not in ('f','F','m','M'):
             print("Invalid input ")
             continue
+        gend=gend.upper()
         break
     birth=input("ENTER DATE OF BIRTH--- ")
     while True:
@@ -196,14 +203,14 @@ def update(x=''):
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
-            print("Patient Log")
+            print(" Patient Log")
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
 
             m="select * from Patient_Reciept where PID='"+str(n)+"'"
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Reason','Bill','Date of Entry')
-            print("Patient Reciept")
+            print(" Patient Reciept")
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
 
             q=input("Hit enter to continue ")
@@ -334,11 +341,13 @@ def delete(n=''):
         
 def search(upd,dele):
     if upd==True:
-        n=inpcheck("Enter the patient id of the patient details to be updated- ")
+        n=inpcheck("Enter the patient id of the patient details to be updated(0 to cancel)- ")
     elif dele==True:
-        n=inpcheck("Enter the patient id of the patient details to be deleted- ")
+        n=inpcheck("Enter the patient id of the patient details to be deleted(0 to cancel)- ")
     else:
-        n=inpcheck("Enter the patient id of the patient details to be searched- ")
+        n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+    if n==0:
+        return
     query="select * from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
     
@@ -354,14 +363,14 @@ def search(upd,dele):
    
     else:
         header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
-        print("P")
+        print(" Patient Log")
         print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
 
         m="select * from Patient_Reciept where PID='"+str(n)+"'"
         cur.execute(m)
         z=cur.fetchall()
         header=('P.ID','Reason','Bill','Date of Entry')
-        print("Patient Reciept")
+        print(" Patient Reciept")
         print(tabulate(z,headers=header,tablefmt='fancy_grid'))
 
                      
