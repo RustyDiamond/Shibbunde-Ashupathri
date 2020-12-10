@@ -122,10 +122,9 @@ def display():
         ---------------------------
         1-All records
         ---------------------------
-        2-All records by date
+        2-Patient Bill
         ---------------------------
-        3/Enter-Exit
-        ---------------------------\n--""")
+        3/Enter-Exit \n--""")
         if op=='3' or not op:
             break
         elif op not in('1','2','3'):
@@ -141,6 +140,7 @@ def display():
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
             q=input("Hit enter to continue ")
+        
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
@@ -153,21 +153,20 @@ def display():
                     print("Invalid input. Try again ")
                     continue
                 elif op1=='1':
-                    cur.execute("select * from Hospital_Log order by Date_of_entry asc")
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
-                    header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+                    header=('P.ID','Reason','Bill','Date of Entry')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     print("")
                     break
                 elif op1=='2':
-                    cur.execute("select * from Hospital_Log order by Date_of_entry desc")
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
                     z=cur.fetchall()
-                    header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+                    header=('P.ID','Reason','Bill','Date of Entry')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
                     print("")
-                    break
                     
 def update(x=''):
     print("")
