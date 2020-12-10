@@ -1,17 +1,18 @@
 import mysql.connector
 from tabulate import tabulate
-con=mysql.connector.connect(host="localhost",user="root",password="EHTpa55sentenceisntthateasy")
+Password=input("ENTER PASSWORD--- ")
+con=mysql.connector.connect(host="localhost",user="root",password=Password)
 cur=con.cursor()
 cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
 departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
     ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
    
-query1="create table if not exists Hospital_Log1(PID int(4) not null primary key,Patient_Name \
-    varchar(20),Sex char(1),CPR_Number int(9),Phone_num int(6),Date_OF_birth date)"
+query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
+    varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
 cur.execute(query1)
 
-query1="create table if not exists Hospital_Log2(PID int(4) not null primary key,Reason varchar(100),\
+query1="create table if not exists Patient_Reciept(PID int(4) not null primary key,Reason varchar(100),\
     bill decimal(6,3),Date_of_entry date)"
 cur.execute(query1)
 
@@ -56,7 +57,7 @@ def inpcheck(x):
             continue
         break
     return inp
-        
+   
 def insert():
     print("")
     while True:
@@ -77,6 +78,7 @@ def insert():
             print("Invalid input ")
             continue
         break
+    birth=input("ENTER DATE OF BIRTH--- ")
     while True:
         cpr=inpcheck("ENTER CPR---: ")
         if len(str(cpr))==5:
@@ -102,8 +104,8 @@ def insert():
           ***(MAX FIVE)""")
     bill,reas=billcount()
     date=input("ENTER DATE OF ADMISSION--- ")
-    cur.execute("insert into Hospital_Log1 values({},'{}','{}',{},{},'{}')".format(num,name,gend,cpr,phone,date))
-    cur.execute("insert into Hospital_Log2 values({},'{}',{})".format(num,reas,bill))
+    cur.execute("insert into Hospital_Log values({},'{}','{}','{}',{},{})".format(num,name,gend,birth,cpr,phone))
+    cur.execute("insert into Patient_Reciept values({},'{}',{},'{}')".format(num,reas,bill,date))
     con.commit()
 
 
@@ -166,42 +168,56 @@ def update(x=''):
                 --> 1-PID
                 --> 2-Patient name
                 --> 3-Gender
-                --> 4-CPR NO.
-                --> 5-Phone Number
-                --> 6-Reason
-                --> 7-Date of Entry
-                --> 8/Enter-Exit''')
+                --> 4-Date of birth
+                --> 5-CPR NO.
+                --> 6-Phone Number
+                --> 7-Reason
+                --> 8-Date of Entry
+                --> 9/Enter-Exit''')
                
     while True:
-        ch=input('Enter Choice(8/Enter to exit)- ')
+        ch=input('Enter Choice(9/Enter to exit)- ')
         print("")
-        if not ch or ch=='8':
+        if not ch or ch=='9':
             break
-        elif ch not in ('1','2','3','4','5','6','7','8'):
+        elif ch not in ('1','2','3','4','5','6','7','8','9'):
             print("Incorrect input. Try again")
 
         elif ch=='1':
             n=inpcheck('Enter new Patient ID-- ')
-            query="update hospital_log1 set PID='"+str(n)+"' where PID='"+str(x)+"'"
+            query="update hospital_log set PID='"+str(n)+"' where PID='"+str(x)+"'"   #Patient table
+            cur.execute(query)
+
+            query="update Patient_Reciept set PID='"+str(n)+"' where PID='"+str(x)+"'"   #Reciept table
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(n)+"'"
+
+            m="select * from hospital_log where PID='"+str(n)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Sex','Phone Number','Date of Entry')
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
+            print("Patient Log")
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+
+            m="select * from Patient_Reciept where PID='"+str(n)+"'"
+            cur.execute(m)
+            z=cur.fetchall()
+            header=('P.ID','Reason','Bill','Date of Entry')
+            print("Patient Reciept")
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+
             q=input("Hit enter to continue ")
             print("")
             
         elif ch=='2':
             n=input('Enter New patient name-- ')
-            query="update hospital_log set1 Patient_Name='"+str(n)+"' where PID='"+str(x)+"'"
+            query="update hospital_log set Patient_Name='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(x)+"'"
+            m="select * from hospital_log where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Sex','Phone Number','Date of Entry')
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
             print("")
@@ -213,53 +229,65 @@ def update(x=''):
                     print("Invalid input ")
                     continue
                 break
-            query="update hospital_log set1 Sex='"+str(n)+"' where PID='"+str(x)+"'"
+            query="update hospital_log set Sex='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(x)+"'"
+            m="select * from hospital_log where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Sex','Phone Number','Date of Entry')
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
             print("")
-               
+
         elif ch=='4':
+            n=input('Enter New Date of Birth- ')
+            query="update hospital_log set Date_Of_Birth='"+n+"' where PID='"+str(x)+"'"
+            cur.execute(query)
+            con.commit()
+            m="select * from hospital_log where PID='"+str(x)+"'"
+            cur.execute(m)
+            z=cur.fetchall()
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            q=input("Hit enter to continue ")  
+
+        elif ch=='5':
             while True:
                 n=inpcheck('Enter New CPR No.- ')
                 if len(str(n))==5:
                     break
                 else:
                     print("*Invalid CPR Number. Make sure 5 digits are present* ")
-            query="update hospital_log1 set CPR_Number='"+str(n)+"' where PID='"+str(x)+"'"
+            query="update hospital_log set CPR_Number='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(x)+"'"
+            m="select * from hospital_log where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Sex','Phone Number','Date of Entry')
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
             print("")
 
-        elif ch=='5':
+        elif ch=='6':
             while True:
                 n=inpcheck('Enter New Phone Number.- ')
                 if len(str(n))==6:
                     break
                 else:
                     print("*Invalid Phone Number. Make sure 6 digits are present* ")
-            query="update hospital_log1 set Phone_num='"+str(n)+"' where PID='"+str(x)+"'"
+            query="update hospital_log set Phone_num='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(x)+"'"
+            m="select * from hospital_log where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Sex','Phone Number','Date of Entry')
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
             print("")
-        elif ch=='6':
+        elif ch=='7':
             print("""---ENTER NEW DEPARTMENTS---
                     --> 1-ENT
                     --> 2-Dentist 
@@ -272,34 +300,34 @@ def update(x=''):
                     --> 9/Enter-Exit
                     --> (MAX FIVE)""")
             bill,reas=billcount()
-            query="update hospital_log1 set Reason='"+reas+"' where PID='"+str(x)+"'"
+            query="update Patient_Reciept set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
-            query="update hospital_log2 set bill='"+str(bill)+"' where PID='"+str(x)+"'"
+            query="update Patient_Reciept set bill='"+str(bill)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log2 where hospital_log1.PID=hospital_log2.PID and PID='"+str(x)+"'"
+            m="select * from Patient_Reciept where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Reason',' Bill')
+            header=('P.ID','Reason',' Bill','Date of Entry')
             print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
             q=input("Hit enter to continue ")                 
 
-        elif ch=='5':
-            n=input('Enter New Date- ')
-            query="update hospital_log1 set Date_of_entry='"+n+"' where PID='"+str(x)+"'"
+        elif ch=='8':
+            n=input('Enter New Date of Entry- ')
+            query="update Patient_Reciept set Date_of_entry='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
-            m="select * from hospital_log1 where PID='"+str(x)+"'"
+            m="select * from Patient_Reciept where PID='"+str(x)+"'"
             cur.execute(m)
             z=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+            header=('P.ID','Reason',' Bill','Date of Entry')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
             q=input("Hit enter to continue ")
         
 def delete(n=''):
-    query="delete from hospital_log1 where PID='"+str(n)+"'"
+    query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
-    query="delete from hospital_log2 where PID='"+str(n)+"'"
+    query="delete from Patient_Reciept where PID='"+str(n)+"'"
     cur.execute(query)
     print('Record of Patient Number' ,n,'is deleted')
     con.commit()
@@ -325,8 +353,17 @@ def search(upd,dele):
             search(False,False)
    
     else:
-        header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+        header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
+        print("P")
         print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
+
+        m="select * from Patient_Reciept where PID='"+str(n)+"'"
+        cur.execute(m)
+        z=cur.fetchall()
+        header=('P.ID','Reason','Bill','Date of Entry')
+        print("Patient Reciept")
+        print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+
                      
         if upd==True:
             update(n)
