@@ -11,15 +11,11 @@ while True:
 cur=con.cursor()
 cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
-departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
-    ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
-   Hospital_Log1
-query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
-    varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
+departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
+query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
 cur.execute(query1)
 
-query1="create table if not exists Patient_Reciept(PID int(4) not null primary key,Reason varchar(100),\
-    bill decimal(6,3),Date_of_entry date)"
+query1="create table if not exists Patient_Reciept(PID int(4) not null primary key,Reason varchar(100),bill decimal(6,3),Date_of_entry date)"
 cur.execute(query1)
 
 cur.execute("use shmhospital")
@@ -31,7 +27,7 @@ def billcount():
     while True:
         if len(dep)>=5:
             q=input("All selected- Hit enter ")
-            break                                          
+            break                                       
         reason=input("Enter department number(9/Enter to exit)- ")                 
         if not reason or reason=='9':
             print("DONE")
@@ -136,7 +132,7 @@ def display():
             RECORD=[]
             cur.execute("select * from Hospital_Log")
             RECORD=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+            header=('P.ID','Patient Name','GENDER','Date of Birth','CPR',' PHONE NO.')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
             q=input("Hit enter to continue ")
@@ -153,9 +149,9 @@ def display():
                     print("Invalid input. Try again ")
                     continue
                 elif op1=='1':
-                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
+                    cur.execute("select PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
-                    header=('P.ID','Reason','Bill','Date of Entry')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone no.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     print("")
@@ -456,5 +452,6 @@ while True:
         print(kop6)
         print("")
         break
+
        
 
