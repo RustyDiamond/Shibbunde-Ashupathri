@@ -155,7 +155,7 @@ def display():
                 elif op1=='1':
                     cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
-                    header=('P.ID','Reason','Bill','Date of Entry')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone_num')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     print("")
@@ -163,7 +163,7 @@ def display():
                 elif op1=='2':
                     cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
                     z=cur.fetchall()
-                    header=('P.ID','Reason','Bill','Date of Entry')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone_num')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
                     print("")
