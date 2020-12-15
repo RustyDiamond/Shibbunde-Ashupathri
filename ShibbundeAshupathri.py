@@ -132,7 +132,7 @@ def display():
             RECORD=[]
             cur.execute("select * from Hospital_Log")
             RECORD=cur.fetchall()
-            header=('P.ID','Patient Name','GENDER','Date of Birth','CPR',' PHONE NO.')
+            header=('P.ID','Patient Name','CPR','date of birth','Date of Entry',' Bill')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
             q=input("Hit enter to continue ")
@@ -149,9 +149,9 @@ def display():
                     print("Invalid input. Try again ")
                     continue
                 elif op1=='1':
-                    cur.execute("select PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
-                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone no.')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     print("")
@@ -159,10 +159,12 @@ def display():
                 elif op1=='2':
                     cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
                     z=cur.fetchall()
-                    header=('P.ID','Reason','Bill','Date of Entry')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
                     print("")
+                    break
+    
                     
 def update(x=''):
     print("")
@@ -334,6 +336,29 @@ def delete(n=''):
     print('Record of Patient Number' ,n,'is deleted')
     con.commit()
         
+
+    if upd==True:
+        n=inpcheck("Enter the patient name of the patient details to be updated(0 to cancel)- ")
+    elif dele==True:
+        n=inpcheck("Enter the patient name of the patient details to be deleted(0 to cancel)- ")
+    else:
+        n=inpcheck("Enter the patient name of the patient details to be searched(0 to cancel)- ")
+    if n==0:
+        return
+    query="select * from hospital_log where Patient_Name='"+str(n)+"'"
+    cur.execute(query)
+    
+    rec = cur.fetchall()
+    if not rec:
+        print('Not found. Try again')
+        if upd==True:
+            search(True,False)
+        elif dele==True:
+            search(False,True)
+        else:
+            search(False,False)
+            
+
 def search(upd,dele):
     if upd==True:
         n=inpcheck("Enter the patient id of the patient details to be updated(0 to cancel)- ")
@@ -383,8 +408,7 @@ def search(upd,dele):
                     break
                 else:
                     print("Invalid input. Try again")
-                    continue
-                   
+                    continue      
 
 while True:
     print("""    ------COMMANDS------
@@ -452,6 +476,8 @@ while True:
         print(kop6)
         print("")
         break
+
+
 
        
 
