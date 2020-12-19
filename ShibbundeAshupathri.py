@@ -1,4 +1,5 @@
 import mysql.connector
+import random
 from tabulate import tabulate
 while True:
     try:
@@ -13,7 +14,7 @@ cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
 departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
     ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
-   Hospital_Log1
+   
 query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
     varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
 cur.execute(query1)
@@ -122,10 +123,9 @@ def display():
         ---------------------------
         1-All records
         ---------------------------
-        2-All records by date
+        2-Patient Bill
         ---------------------------
-        3/Enter-Exit
-        ---------------------------\n--""")
+        3/Enter-Exit \n--""")
         if op=='3' or not op:
             break
         elif op not in('1','2','3'):
@@ -141,6 +141,7 @@ def display():
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
             q=input("Hit enter to continue ")
+        
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
@@ -153,17 +154,17 @@ def display():
                     print("Invalid input. Try again ")
                     continue
                 elif op1=='1':
-                    cur.execute("select * from Hospital_Log order by Date_of_entry asc")
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
-                    header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
                     q=input("Hit enter to continue ")
                     print("")
                     break
                 elif op1=='2':
-                    cur.execute("select * from Hospital_Log order by Date_of_entry desc")
+                    cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
                     z=cur.fetchall()
-                    header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+                    header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
                     q=input("Hit enter to continue ")
                     print("")
@@ -235,6 +236,7 @@ def update(x=''):
                 if len(n)>1 or n not in ('f','F','m','M'):
                     print("Invalid input ")
                     continue
+                n=n.upper()
                 break
             query="update hospital_log set Sex='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
@@ -340,16 +342,35 @@ def delete(n=''):
     con.commit()
         
 def search(upd,dele):
+
     if upd==True:
         n=inpcheck("Enter the patient id of the patient details to be updated(0 to cancel)- ")
+        query="select * from hospital_log where PID='"+str(n)+"'"
+        cur.execute(query)
     elif dele==True:
         n=inpcheck("Enter the patient id of the patient details to be deleted(0 to cancel)- ")
+        query="select * from hospital_log where PID='"+str(n)+"'"
+        cur.execute(query)
     else:
-        n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+        while True:
+            ch=inpcheck("""Search by 1-PID
+          2-Patient Name
+          --""")
+            if ch not in (0,1,2):
+                print("Invalid input. Try again ")
+                continue
+            break
+        if ch==0:
+            return
+        elif ch==1:
+            n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            query="select * from hospital_log where PID='"+str(n)+"'"
+            cur.execute(query)
+        elif ch==2:
+            n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
+            cur.execute('select * from hospital_log where Patient_Name like"%'+n+'%"')
     if n==0:
         return
-    query="select * from hospital_log where PID='"+str(n)+"'"
-    cur.execute(query)
     
     rec = cur.fetchall()
     if not rec:
@@ -362,16 +383,40 @@ def search(upd,dele):
             search(False,False)
    
     else:
-        header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
-        print(" Patient Log")
-        print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
+        if upd==False and dele==False and ch==2:
+            cur.execute('select PID,Patient_Name from hospital_log where Patient_Name like"%'+n+'%"')
+            pnum=cur.fetchall()
+            print("-----------------------------------------------------------------------------------------------------------------------")
+            for k in pnum:
+                cur.execute("select * from hospital_log where PID='"+str(k[0])+"'")
+                rec = cur.fetchall()
+                header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
+                print("--------------------")
+                print(' '+k[1])
+                print("--------------------")
+                print(" Patient Log")
+                print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
+                
+                m="select * from Patient_Reciept where PID='"+str(k[0])+"'"
+                cur.execute(m)
+                z=cur.fetchall()
+                header=('P.ID','Reason','Amount','Date of Entry')
+                print(" Patient Reciept")
+                print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+                print("-----------------------------------------------------------------------------------------------------------------------")
+        else:
+            header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
+            print("-----------------------------------------------------------------------------------------------------------------------")
+            print(" Patient Log")
+            print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
 
-        m="select * from Patient_Reciept where PID='"+str(n)+"'"
-        cur.execute(m)
-        z=cur.fetchall()
-        header=('P.ID','Reason','Bill','Date of Entry')
-        print(" Patient Reciept")
-        print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            m="select * from Patient_Reciept where PID='"+str(n)+"'"
+            cur.execute(m)
+            z=cur.fetchall()
+            header=('P.ID','Reason','Amount','Date of Entry')
+            print(" Patient Reciept")
+            print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            print("-----------------------------------------------------------------------------------------------------------------------")
 
                      
         if upd==True:
@@ -389,7 +434,59 @@ def search(upd,dele):
                 else:
                     print("Invalid input. Try again")
                     continue
-                   
+
+def Autoinsert(x):
+    for k in range(x):
+
+        while True:
+            num=random.randint(1,1000)
+            query="select * from hospital_log where PID='"+str(num)+"'"
+            cur.execute(query)
+            rec = cur.fetchall()
+            if not rec:
+                break
+            else:
+                num+=1
+                continue
+        with open("NameList.txt",'r') as nfile:
+            nlist=nfile.readlines()
+            name=nlist[random.randint(1,300)-1][0:-1]
+
+        randg=random.randint(1,2)
+        if randg==1:
+            gend='M'
+        else:
+            gend='F'
+        
+        yy=random.randint(1940,2015)    
+        mm=random.randint(1,12)
+        dd=random.randint(1,28)
+        birth=str(yy)+'-'+str(mm)+'-'+str(dd)
+        
+        cpr=random.randint(10000,99999)
+        
+        
+        phone=random.randint(100000,999999)
+
+        reas=''
+        bill=0
+        tempdep=list(departments)
+        depnum=random.randint(1,5)        
+        for somenumber in range(depnum):
+            randdep=random.choice(tempdep)
+            if somenumber==depnum-1:
+                reas+=randdep[0]
+            else:
+                reas+=randdep[0]+','
+            bill+=randdep[1]
+            tempdep.remove(randdep)
+        yy=random.randint(1940,2015)    
+        mm=random.randint(1,12)
+        dd=random.randint(1,28)
+        date=str(yy)+'-'+str(mm)+'-'+str(dd)
+        cur.execute("insert into Hospital_Log values({},'{}','{}','{}',{},{})".format(num,name,gend,birth,cpr,phone))
+        cur.execute("insert into Patient_Reciept values({},'{}',{},'{}')".format(num,reas,bill,date))
+        con.commit()                  
 
 while True:
     print("""    ------COMMANDS------
@@ -410,7 +507,7 @@ while True:
         do=input("""ENTER COMMAND- """)
         if not do:
             break
-        elif do not in('1','2','3','4','5','6'):
+        elif do not in('1','2','3','4','5','6','0'):
             print("Invalid input. Try again ")
             continue
 
@@ -450,6 +547,14 @@ while True:
         print(kop5)
         print("")
         search(False,True)    #delete
+    elif do=='0':
+        print("")
+        s5 = "II---AUTO INSERT---II"
+        kop5 = s5.center(70,"-")
+        print(kop5)
+        print("")
+        ins=int(input("ENTER NUMBER OF RECORDS- "))
+        Autoinsert(ins) 
     elif not do or do=='6':
         print("")
         s6 = "II---EXIT---II"
