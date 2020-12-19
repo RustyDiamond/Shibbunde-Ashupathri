@@ -14,7 +14,7 @@ cur.execute("create database if not exists SHMhospital")
 cur.execute("use shmhospital")
 departments=[["ENT",7],["Dentist",8],["Pediatrician",6],["Cardiologist",10],["Ophthalmologist",9],\
     ["General Surgeon",10],["Psychiatrist",9],["Dermatologist",8]]
-   
+
 query1="create table if not exists Hospital_Log(PID int(4) not null primary key,Patient_Name \
     varchar(20),Sex char(1),Date_Of_Birth date,CPR_Number int(9),Phone_num int(6))"
 cur.execute(query1)
@@ -23,7 +23,7 @@ query1="create table if not exists Patient_Reciept(PID int(4) not null primary k
     bill decimal(6,3),Date_of_entry date)"
 cur.execute(query1)
 
-cur.execute("use shmhospital")
+
 
 def billcount():
     dep=[]
@@ -338,31 +338,40 @@ def delete(n=''):
     cur.execute(query)
     query="delete from Patient_Reciept where PID='"+str(n)+"'"
     cur.execute(query)
-    print('Record of Patient Number' ,n,'is deleted')
+    print('Record has been deleted.')
     con.commit()
         
 def search(upd,dele):
+    while True:
+        ch=inpcheck("""Search by 1-PID
+          2-Patient Name\n--""")
+        if ch not in (0,1,2):
+            print("Invalid input. Try again ")
+            continue
+        break
+    if ch==0:
+        return
 
     if upd==True:
-        n=inpcheck("Enter the patient id of the patient details to be updated(0 to cancel)- ")
-        query="select * from hospital_log where PID='"+str(n)+"'"
-        cur.execute(query)
+        if ch==1:
+            n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            query="select * from hospital_log where PID='"+str(n)+"'"
+            cur.execute(query)
+        elif ch==2:
+            n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
+            cur.execute('select * from hospital_log where Patient_Name="'+n+'"')
+
     elif dele==True:
-        n=inpcheck("Enter the patient id of the patient details to be deleted(0 to cancel)- ")
-        query="select * from hospital_log where PID='"+str(n)+"'"
-        cur.execute(query)
+        if ch==1:
+            n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            query="select * from hospital_log where PID='"+str(n)+"'"
+            cur.execute(query)
+        elif ch==2:
+            n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
+            cur.execute('select * from hospital_log where Patient_Name="'+n+'"')
+
     else:
-        while True:
-            ch=inpcheck("""Search by 1-PID
-          2-Patient Name
-          --""")
-            if ch not in (0,1,2):
-                print("Invalid input. Try again ")
-                continue
-            break
-        if ch==0:
-            return
-        elif ch==1:
+        if ch==1:
             n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
             query="select * from hospital_log where PID='"+str(n)+"'"
             cur.execute(query)
@@ -410,7 +419,12 @@ def search(upd,dele):
             print(" Patient Log")
             print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
 
-            m="select * from Patient_Reciept where PID='"+str(n)+"'"
+            if ch==2:
+                cur.execute("select PID from hospital_log where Patient_Name='"+n+"'")
+                pnum=cur.fetchall()
+                m="select * from Patient_Reciept where PID='"+str(pnum[0][0])+"'"
+            else:
+                m="select * from Patient_Reciept where PID='"+str(n)+"'"
             cur.execute(m)
             z=cur.fetchall()
             header=('P.ID','Reason','Amount','Date of Entry')
@@ -439,14 +453,14 @@ def Autoinsert(x):
     for k in range(x):
 
         while True:
-            num=random.randint(1,1000)
+            num=random.randint(1,10000)
             query="select * from hospital_log where PID='"+str(num)+"'"
             cur.execute(query)
             rec = cur.fetchall()
             if not rec:
                 break
             else:
-                num+=1
+                
                 continue
         with open("NameList.txt",'r') as nfile:
             nlist=nfile.readlines()
