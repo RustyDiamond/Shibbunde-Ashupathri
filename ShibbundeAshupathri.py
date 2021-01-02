@@ -1,4 +1,5 @@
 import mysql.connector
+import time
 import random
 from tabulate import tabulate
 while True:
@@ -23,7 +24,14 @@ query1="create table if not exists Patient_Reciept(PID int(4) not null primary k
     bill decimal(6,3),Date_of_entry date)"
 cur.execute(query1)
 
-
+def elaptime(x):
+    t = time.perf_counter() 
+    tt1=int(t-x)//60
+    tt2=(t-x)%60
+    if tt1==0:
+        print(f"(Completed in {tt2:.3f} secs\n)")
+    else:
+        print(f"(Completed in {str(tt1)}:{tt2:.0f} mins\n)")                         
 
 def billcount():
     dep=[]
@@ -112,10 +120,11 @@ def insert():
           ***(MAX FIVE)""")
     bill,reas=billcount()
     date=input("ENTER DATE OF ADMISSION--- ")
+    t1 = time.perf_counter()
     cur.execute("insert into Hospital_Log values({},'{}','{}','{}',{},{})".format(num,name,gend,birth,cpr,phone))
     cur.execute("insert into Patient_Reciept values({},'{}',{},'{}')".format(num,reas,bill,date))
     con.commit()
-
+    elaptime(t1)
 
 def display():
     while True:
@@ -131,45 +140,48 @@ def display():
         elif op not in('1','2','3'):
             print("Invalid input. Try again ")
             print("")
-            continue
-        
+            continue       
         elif op=='1':
+            t1 = time.perf_counter()
             RECORD=[]
             cur.execute("select * from Hospital_Log")
             RECORD=cur.fetchall()
             header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
-            q=input("Hit enter to continue ")
-        
+            elaptime(t1)
+            q=input("Hit enter to continue ")       
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
                    ('2','New to Old')]
                 h=('Hit','Order')
                 print(tabulate(x,headers=h,tablefmt='fancy_grid'))
-                op1=input('Order-') 
-                
+                op1=input('Order-')                
                 if op1 not in('1','2'):
                     print("Invalid input. Try again ")
                     continue
                 elif op1=='1':
+                    t1 = time.perf_counter()
                     cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry asc")
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
+                    elaptime(t1)
                     q=input("Hit enter to continue ")
                     print("")
                     break
                 elif op1=='2':
+                    t1 = time.perf_counter()
                     cur.execute("select Hospital_Log.PID,Patient_Name,CPR_Number,Reason,Bill,Date_of_Entry,Phone_num from Patient_Reciept,Hospital_Log where Hospital_Log.PID = Patient_Reciept.PID order by Date_of_entry desc")
                     z=cur.fetchall()
                     header=('P.ID','Patient Name','CPR','Reason','Bill','Date of Entry','Phone No.')
                     print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+                    elaptime(t1)
                     q=input("Hit enter to continue ")
                     print("")
-                    break
-                    
+                    break 
+             
 def update(x=''):
     print("")
     print('''What would you like to update?
@@ -181,8 +193,7 @@ def update(x=''):
                 --> 6-Phone Number
                 --> 7-Reason
                 --> 8-Date of Entry
-                --> 9/Enter-Exit''')
-               
+                --> 9/Enter-Exit''')              
     while True:
         ch=input('Enter Choice(9/Enter to exit)- ')
         print("")
@@ -193,6 +204,7 @@ def update(x=''):
 
         elif ch=='1':
             n=inpcheck('Enter new Patient ID-- ')
+            t1 = time.perf_counter()
             query="update hospital_log set PID='"+str(n)+"' where PID='"+str(x)+"'"   #Patient table
             cur.execute(query)
 
@@ -213,12 +225,13 @@ def update(x=''):
             header=('P.ID','Reason','Bill','Date of Entry')
             print(" Patient Reciept")
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
-
+            elaptime(t1)
             q=input("Hit enter to continue ")
             print("")
             
         elif ch=='2':
             n=input('Enter New patient name-- ')
+            t1 = time.perf_counter()
             query="update hospital_log set Patient_Name='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -227,6 +240,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            elaptime(t1)
             q=input("Hit enter to continue ")
             print("")
 
@@ -238,6 +252,7 @@ def update(x=''):
                     continue
                 n=n.upper()
                 break
+            t1 = time.perf_counter()
             query="update hospital_log set Sex='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -246,11 +261,13 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            elaptime(t1)
             q=input("Hit enter to continue ")
             print("")
 
         elif ch=='4':
             n=input('Enter New Date of Birth- ')
+            t1 = time.perf_counter()
             query="update hospital_log set Date_Of_Birth='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -259,6 +276,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            elaptime(t1)
             q=input("Hit enter to continue ")  
 
         elif ch=='5':
@@ -268,6 +286,7 @@ def update(x=''):
                     break
                 else:
                     print("*Invalid CPR Number. Make sure 5 digits are present* ")
+            t1 = time.perf_counter()
             query="update hospital_log set CPR_Number='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -276,6 +295,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            elaptime(t1)
             q=input("Hit enter to continue ")
             print("")
 
@@ -286,6 +306,7 @@ def update(x=''):
                     break
                 else:
                     print("*Invalid Phone Number. Make sure 6 digits are present* ")
+            t1 = time.perf_counter()
             query="update hospital_log set Phone_num='"+str(n)+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -294,6 +315,7 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
+            elaptime(t1)
             q=input("Hit enter to continue ")
             print("")
         elif ch=='7':
@@ -309,6 +331,7 @@ def update(x=''):
                     --> 9/Enter-Exit
                     --> (MAX FIVE)""")
             bill,reas=billcount()
+            t1 = time.perf_counter()
             query="update Patient_Reciept set Reason='"+reas+"' where PID='"+str(x)+"'"
             cur.execute(query)
             query="update Patient_Reciept set bill='"+str(bill)+"' where PID='"+str(x)+"'"
@@ -319,10 +342,12 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Reason',' Bill','Date of Entry')
             print(tabulate(z,headers=header,tablefmt='fancy_grid')) 
+            elaptime(t1)
             q=input("Hit enter to continue ")                 
 
         elif ch=='8':
             n=input('Enter New Date of Entry- ')
+            t1 = time.perf_counter()
             query="update Patient_Reciept set Date_of_entry='"+n+"' where PID='"+str(x)+"'"
             cur.execute(query)
             con.commit()
@@ -331,16 +356,19 @@ def update(x=''):
             z=cur.fetchall()
             header=('P.ID','Reason',' Bill','Date of Entry')
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
-            q=input("Hit enter to continue ")
-        
+            elaptime(t1)
+            q=input("Hit enter to continue ") 
+
 def delete(n=''):
+    t1 = time.perf_counter()
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
     query="delete from Patient_Reciept where PID='"+str(n)+"'"
     cur.execute(query)
     print('Record has been deleted.')
     con.commit()
-        
+    elaptime(t1)
+
 def search(upd,dele):
     while True:
         ch=inpcheck("""Search by 1-PID
@@ -351,36 +379,56 @@ def search(upd,dele):
         break
     if ch==0:
         return
-
     if upd==True:
         if ch==1:
             n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            if n==0:
+                return
             query="select * from hospital_log where PID='"+str(n)+"'"
+            t1 = time.perf_counter()
             cur.execute(query)
         elif ch==2:
             n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
+            if n=='0':
+                return
+            t1 = time.perf_counter()
             cur.execute('select * from hospital_log where Patient_Name="'+n+'"')
+        elaptime(t1)
 
     elif dele==True:
         if ch==1:
             n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            if n==0:
+                return
+            t1 = time.perf_counter()
             query="select * from hospital_log where PID='"+str(n)+"'"
             cur.execute(query)
         elif ch==2:
             n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
-            cur.execute('select * from hospital_log where Patient_Name="'+n+'"')
+            if n=='0':
+                return
+            t1 = time.perf_counter()
+            query='select * from hospital_log where Patient_Name="'+n+'"'
+            cur.execute(query)
+        elaptime(t1)
 
     else:
         if ch==1:
             n=inpcheck("Enter the patient id of the patient details to be searched(0 to cancel)- ")
+            if n==0:
+                return
+            t1 = time.perf_counter()
             query="select * from hospital_log where PID='"+str(n)+"'"
             cur.execute(query)
         elif ch==2:
             n=input("Enter the name of the patient details to be searched(0 to cancel)- ")
-            cur.execute('select * from hospital_log where Patient_Name like"%'+n+'%"')
-    if n==0:
-        return
-    
+            if n=='0':
+                return
+            t1 = time.perf_counter()
+            query='select * from hospital_log where Patient_Name like"%'+n+'%"'
+            cur.execute(query)
+        elaptime(t1)
+        
     rec = cur.fetchall()
     if not rec:
         print('Not found. Try again')
@@ -393,9 +441,10 @@ def search(upd,dele):
    
     else:
         if upd==False and dele==False and ch==2:
+            t1 = time.perf_counter()
             cur.execute('select PID,Patient_Name from hospital_log where Patient_Name like"%'+n+'%"')
             pnum=cur.fetchall()
-            print("-----------------------------------------------------------------------------------------------------------------------")
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             for k in pnum:
                 cur.execute("select * from hospital_log where PID='"+str(k[0])+"'")
                 rec = cur.fetchall()
@@ -412,13 +461,14 @@ def search(upd,dele):
                 header=('P.ID','Reason','Amount','Date of Entry')
                 print(" Patient Reciept")
                 print(tabulate(z,headers=header,tablefmt='fancy_grid'))
-                print("-----------------------------------------------------------------------------------------------------------------------")
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            elaptime(t1)
         else:
+            t1 = time.perf_counter()
             header=('P.ID','Patient Name','Sex','Date of Birth','CPR','Phone Number')
-            print("-----------------------------------------------------------------------------------------------------------------------")
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             print(" Patient Log")
             print(tabulate(rec,headers=header,tablefmt='fancy_grid'))
-
             if ch==2:
                 cur.execute("select PID from hospital_log where Patient_Name='"+n+"'")
                 pnum=cur.fetchall()
@@ -430,9 +480,8 @@ def search(upd,dele):
             header=('P.ID','Reason','Amount','Date of Entry')
             print(" Patient Reciept")
             print(tabulate(z,headers=header,tablefmt='fancy_grid'))
-            print("-----------------------------------------------------------------------------------------------------------------------")
-
-                     
+            print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")                    
+            elaptime(t1)
         if upd==True:
             update(n)
         elif dele==True:
@@ -450,21 +499,20 @@ def search(upd,dele):
                     continue
 
 def Autoinsert(x):
+    t1 = time.perf_counter()
     for k in range(x):
-
         while True:
-            num=random.randint(1,10000)
+            num=random.randint(1,1000000)
             query="select * from hospital_log where PID='"+str(num)+"'"
             cur.execute(query)
             rec = cur.fetchall()
             if not rec:
                 break
-            else:
-                
+            else:                
                 continue
         with open("NameList.txt",'r') as nfile:
             nlist=nfile.readlines()
-            name=nlist[random.randint(1,300)-1][0:-1]
+            name=nlist[random.randint(1,600)-1][0:-1]
 
         randg=random.randint(1,2)
         if randg==1:
@@ -476,10 +524,8 @@ def Autoinsert(x):
         mm=random.randint(1,12)
         dd=random.randint(1,28)
         birth=str(yy)+'-'+str(mm)+'-'+str(dd)
-        
-        cpr=random.randint(10000,99999)
-        
-        
+
+        cpr=random.randint(10000,99999)      
         phone=random.randint(100000,999999)
 
         reas=''
@@ -498,9 +544,11 @@ def Autoinsert(x):
         mm=random.randint(1,12)
         dd=random.randint(1,28)
         date=str(yy)+'-'+str(mm)+'-'+str(dd)
+
         cur.execute("insert into Hospital_Log values({},'{}','{}','{}',{},{})".format(num,name,gend,birth,cpr,phone))
         cur.execute("insert into Patient_Reciept values({},'{}',{},'{}')".format(num,reas,bill,date))
-        con.commit()                  
+        con.commit()
+    elaptime(t1)
 
 while True:
     print("""    ------COMMANDS------
@@ -524,7 +572,6 @@ while True:
         elif do not in('1','2','3','4','5','6','0'):
             print("Invalid input. Try again ")
             continue
-
         break
     if do=='1':
         print("")
@@ -576,5 +623,6 @@ while True:
         print(kop6)
         print("")
         break
+
        
 
