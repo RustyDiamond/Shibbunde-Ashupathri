@@ -29,9 +29,9 @@ def elaptime(x):
     tt1=int(t-x)//60
     tt2=(t-x)%60
     if tt1==0:
-        print(f"(Completed in {tt2:.3f} secs)")
+        print(f"(Completed in {tt2:.3f} secs)\n")
     else:
-        print(f"(Completed in {str(tt1)}:{tt2:.0f} mins)")                         
+        print(f"(Completed in {str(tt1)}:{tt2:.0f} mins)\n")                         
 
 def billcount():
     dep=[]
@@ -132,7 +132,7 @@ def display():
         ---------------------------
         1-All records
         ---------------------------
-        2-Patient Bill
+        2-Patient Reciepts
         ---------------------------
         3/Enter-Exit \n--""")
         if op=='3' or not op:
@@ -148,9 +148,9 @@ def display():
             RECORD=cur.fetchall()
             header=('P.ID','Patient Name','Gender','Date of Birth','CPR','Phone Number')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
-            print("")
             elaptime(t1)
-            q=input("Hit enter to continue ")       
+            q=input("Hit enter to continue ")
+            print("")       
         elif op=='2':
             while True:
                 x=[('1','Old to New'),
@@ -182,7 +182,13 @@ def display():
                     print("")
                     break 
              
-def update(x=''):
+def update(pid="",name=''):
+    if name:
+        cur.execute("select PID from hospital_log where Patient_Name='"+name+"'")
+        x=cur.fetchall()
+        x=x[0][0]
+    else:
+        x=pid
     print("")
     print('''What would you like to update?
                 --> 1-PID
@@ -359,7 +365,13 @@ def update(x=''):
             elaptime(t1)
             q=input("Hit enter to continue ") 
 
-def delete(n=''):
+def delete(pid='',name=''):
+    if pid:
+        n=pid
+    else:
+        cur.execute("select PID from hospital_log where Patient_Name='"+name+"'")
+        n=cur.fetchall()
+        n=n[0][0]
     t1 = time.perf_counter()
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
@@ -483,12 +495,18 @@ def search(upd,dele):
             print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")                    
             elaptime(t1)
         if upd==True:
-            update(n)
+            if ch==1:
+                update(pid=n)
+            else:
+                update(name=n)
         elif dele==True:
             while True:
                 q=input("Hit enter to confirm / 1 to cancel- ")
                 if not q:
-                    delete(n)
+                    if ch==1:
+                        delete(pid=n)
+                    else:
+                        delete(name=n)
                     q=input("Hit enter to continue ")   
                     break
                 elif q=='1':
@@ -569,7 +587,7 @@ while True:
         do=input("""ENTER COMMAND- """)
         if not do:
             break
-        elif do not in('1','2','3','4','5','6','0'):
+        elif do not in('1','2','3','4','5','6','0','-1'):
             print("Invalid input. Try again ")
             continue
         break
@@ -614,8 +632,17 @@ while True:
         kop5 = s5.center(70,"-")
         print(kop5)
         print("")
-        ins=int(input("ENTER NUMBER OF RECORDS- "))
-        Autoinsert(ins) 
+        ins=int(input("ENTER NUMBER OF RECORDS TO BE INSERTED- "))
+        Autoinsert(ins)
+    elif do=="-1":
+        cur.execute("select count(*) from hospital_log")
+        x=cur.fetchall()
+        x=x[0][0]
+        print(f"Delete all {x} records?")
+        q=input("Type 'yes' to proceed or hit enter to cancel- ")
+        if q.lower()=='yes':
+            cur.execute("delete from hospital_log")
+            cur.execute("delete from Patient_Reciept")
     elif not do or do=='6':
         print("")
         s6 = "II---EXIT---II"
