@@ -370,8 +370,7 @@ def delete(pid='',name=''):
         n=pid
     else:
         cur.execute("select PID from hospital_log where Patient_Name='"+name+"'")
-        n=cur.fetchall()
-        n=n[0][0]
+        n=cur.fetchall()[0][0]
     t1 = time.perf_counter()
     query="delete from hospital_log where PID='"+str(n)+"'"
     cur.execute(query)
@@ -636,8 +635,7 @@ while True:
         Autoinsert(ins)
     elif do=="-1":
         cur.execute("select count(*) from hospital_log")
-        x=cur.fetchall()
-        x=x[0][0]
+        x=cur.fetchall()[0][0]
         print(f"Delete all {x} records?")
         q=input("Type 'yes' to proceed or hit enter to cancel- ")
         if q.lower()=='yes':
