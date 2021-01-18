@@ -29,9 +29,9 @@ def elaptime(x):
     tt1=int(t-x)//60
     tt2=(t-x)%60
     if tt1==0:
-        print(f"(Completed in {tt2:.3f} secs\n)")
+        print(f"(Completed in {tt2:.3f} secs)")
     else:
-        print(f"(Completed in {str(tt1)}:{tt2:.0f} mins\n)")                         
+        print(f"(Completed in {str(tt1)}:{tt2:.0f} mins)")                         
 
 def billcount():
     dep=[]
