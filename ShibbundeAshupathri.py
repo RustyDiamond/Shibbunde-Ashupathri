@@ -146,7 +146,7 @@ def display():
             RECORD=[]
             cur.execute("select * from Hospital_Log")
             RECORD=cur.fetchall()
-            header=('P.ID','Patient Name','CPR','Reason','Date of Entry',' Bill')
+            header=('P.ID','Patient Name','Gender','Date of Birth','CPR','Phone Number')
             print(tabulate(RECORD,headers=header,tablefmt='fancy_grid'))
             print("")
             elaptime(t1)
